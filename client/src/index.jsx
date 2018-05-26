@@ -10,19 +10,45 @@ class App extends React.Component {
     this.state = { 
       repos: []
     }
+  }
 
+  getRepos(term) {
+    $.ajax({
+      url: '/repos',
+      method: 'GET',
+      success: (data) => {
+        this.setState ({
+          repos: data
+        })
+      },
+      error: function(err) {
+        console.log("YOU FAILED: ", err)
+      }
+    });
   }
 
   search (term) {
     console.log(`${term} was searched`);
-    // TODO
+    $.ajax({
+      url: '/repos',
+      method: 'POST',
+      data: {term},
+      success: (data) => {
+        console.log('KIANNA YOU CONNECTED: ', data)
+        this.getRepos(term);
+      },
+      error: function(err) {
+        console.log('YOU HAVE FAILED: ', err)
+      }
+    });
   }
 
   render () {
+    this.getRepos();
     return (<div>
-      <h1>Github Fetcher</h1>
-      <RepoList repos={this.state.repos}/>
+      <h1>GITHUB FETCHER</h1>
       <Search onSearch={this.search.bind(this)}/>
+      <RepoList repos={this.state.repos}/>
     </div>)
   }
 }
